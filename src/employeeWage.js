@@ -51,11 +51,13 @@ function calculateWageUntilLimit() {
     let totalDays = 0;
     let totalWageUntil = 0;
     let dailyWages = new Map();
+    let dailyHoursMap = new Map();
 
     while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
         const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
         const dailyWage = dailyHours * WAGE_PER_HOUR;
         dailyWages.set(totalDays + 1, dailyWage);
+        dailyHoursMap.set(totalDays + 1, dailyHours);
         totalHours += dailyHours;
         totalWageUntil += dailyWage;
         totalDays++;
@@ -84,6 +86,21 @@ function calculateWageUntilLimit() {
 
     const daysWorked = Array.from(dailyWages.values()).filter(wage => wage > 0).length;
     console.log(`Number of days the Employee Worked: ${daysWorked}`);
+
+    const totalWagesAndHours = Array.from(dailyHoursMap.entries()).reduce((acc, [day, hours]) => {
+        acc.totalWage += hours * WAGE_PER_HOUR;
+        acc.totalHours += hours;
+        return acc;
+    }, { totalWage: 0, totalHours: 0 });
+    console.log(`Total Wage: $${totalWagesAndHours.totalWage}, Total Hours: ${totalWagesAndHours.totalHours}`);
+
+    const fullWorkingDays = Array.from(dailyHoursMap.entries()).filter(([day, hours]) => hours === FULL_TIME_HOURS).map(([day]) => day);
+    const partWorkingDays = Array.from(dailyHoursMap.entries()).filter(([day, hours]) => hours === PART_TIME_HOURS).map(([day]) => day);
+    const noWorkingDays = Array.from(dailyHoursMap.entries()).filter(([day, hours]) => hours === 0).map(([day]) => day);
+
+    console.log(`Full Working Days: ${fullWorkingDays}`);
+    console.log(`Part Working Days: ${partWorkingDays}`);
+    console.log(`No Working Days: ${noWorkingDays}`);
 }
 
 calculateWage();
