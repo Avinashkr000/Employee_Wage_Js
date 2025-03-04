@@ -7,14 +7,16 @@ const FULL_TIME_WAGE = FULL_TIME_HOURS * WAGE_PER_HOUR;
 const PART_TIME_WAGE = PART_TIME_HOURS * WAGE_PER_HOUR;
 
 class EmployeePayrollData {
-    constructor(id, name, salary) {
+    constructor(id, name, salary, gender, startDate) {
         this.id = id;
         this.name = name;
         this.salary = salary;
+        this.gender = gender;
+        this.startDate = new Date(startDate);
     }
 
     toString() {
-        return `ID: ${this.id}, Name: ${this.name}, Salary: $${this.salary}`;
+        return `ID: ${this.id}, Name: ${this.name}, Salary: $${this.salary}, Gender: ${this.gender}, Start Date: ${this.startDate.toDateString()}`;
     }
 }
 
@@ -125,7 +127,7 @@ function calculateWageUntilLimit() {
     console.log(`No Working Days: ${noWorkingDays.join(', ')}`);
 }
 
-const employee1 = new EmployeePayrollData(1, "John Doe", 50000);
+const employee1 = new EmployeePayrollData(1, "John Doe", 50000, "Male", "2023-01-01");
 console.log(employee1.toString());
 
 calculateWage();
