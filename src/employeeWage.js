@@ -1,26 +1,23 @@
-const IS_ABSENT = 0;
-const PART_TIME = 1;
-const FULL_TIME = 2;
+const IS_PART_TIME = 1;
+const IS_FULL_TIME = 2;
 const PART_TIME_HOURS = 4;
 const FULL_TIME_HOURS = 8;
 const WAGE_PER_HOUR = 20;
 
-let empCheck = Math.floor(Math.random() * 3);
-let empHours = 0;
-
-switch (empCheck) {
-    case IS_ABSENT:
-        empHours = 0;
-        break;
-    case PART_TIME:
-        empHours = PART_TIME_HOURS;
-        break;
-    case FULL_TIME:
-        empHours = FULL_TIME_HOURS;
-        break;
-    default:
-        empHours = 0;
+function getWorkingHours(empCheck) {
+    switch (empCheck) {
+        case IS_PART_TIME:
+            return PART_TIME_HOURS;
+        case IS_FULL_TIME:
+            return FULL_TIME_HOURS;
+        default:
+            return 0;
+    }
 }
 
-let empWage = empHours * WAGE_PER_HOUR;
-console.log(`Employee worked ${empHours} hours and earned $${empWage}`);
+let empCheck = Math.floor(Math.random() * 10) % 3; 
+let empHrs = getWorkingHours(empCheck);
+let empWage = empHrs * WAGE_PER_HOUR;
+
+console.log("Employee Work Hours: " + empHrs);
+console.log("Employee Wage: " + empWage);
