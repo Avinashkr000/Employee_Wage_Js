@@ -1,62 +1,92 @@
-function calcDailyWage(empHrs) {
-    return empHrs * WAGE_PER_HOUR;
-}
-
-const IS_PART_TIME = 1;
-const IS_FULL_TIME = 2;
-const PART_TIME_HOURS = 4;
 const FULL_TIME_HOURS = 8;
+const PART_TIME_HOURS = 4;
 const WAGE_PER_HOUR = 20;
-const MAX_HRS_IN_MONTH = 160;
-const NUM_OF_WORKING_DAYS = 20;
+const MAX_HOURS = 160;
+const MAX_DAYS = 20;
+const FULL_TIME_WAGE = FULL_TIME_HOURS * WAGE_PER_HOUR;
+const PART_TIME_WAGE = PART_TIME_HOURS * WAGE_PER_HOUR;
 
-function getWorkingHours(empCheck) {
-    switch (empCheck) {
-        case IS_PART_TIME:
+function getWorkHours(empType) {
+    switch (empType) {
+        case 1:
             return PART_TIME_HOURS;
-        case IS_FULL_TIME:
+        case 2:
             return FULL_TIME_HOURS;
         default:
             return 0;
     }
 }
 
-let totalEmpHrs = 0;
-let totalWorkingDays = 0;
-let empDailyWageArr = new Array();
+function calculateWage() {
+    const IS_PRESENT = Math.random() < 0.5;
+    const empType = Math.floor(Math.random() * 3);
+    const workHours = IS_PRESENT ? getWorkHours(empType) : 0;
 
-while (totalEmpHrs < MAX_HRS_IN_MONTH && totalWorkingDays < NUM_OF_WORKING_DAYS) {
-    totalWorkingDays++;
-    let empCheck = Math.floor(Math.random() * 10) % 3;
-    let empHrs = getWorkingHours(empCheck);
-    totalEmpHrs += empHrs;
-    empDailyWageArr.push(calcDailyWage(empHrs));
+    if (IS_PRESENT) {
+        console.log("Employee is Present");
+        console.log(`Employee worked ${workHours} hours and earned $${workHours * WAGE_PER_HOUR}`);
+    } else {
+        console.log("Employee is Absent");
+        console.log("No wages, employee was absent.");
+    }
+
+    console.log(`Employee worked ${workHours} hours`);
 }
 
-let empWage = empDailyWageArr.reduce((total, dailyWage) => total + dailyWage, 0);
+function calculateTotalWage(days) {
+    let totalWage = 0;
+    let dailyWages = [];
+    for (let day = 1; day <= days; day++) {
+        const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+        const dailyWage = dailyHours * WAGE_PER_HOUR;
+        dailyWages.push(dailyWage);
+        totalWage += dailyWage;
+    }
+    console.log(`Daily Wages: ${dailyWages}`);
+    return totalWage;
+}
 
-console.log(" Total Days: " + totalWorkingDays +
-            " | Total Hrs: " + totalEmpHrs +
-            " | Emp Wage: " + empWage);
-console.log("Daily Wages Array: " + empDailyWageArr);
+function calculateWageUntilLimit() {
+    let totalHours = 0;
+    let totalDays = 0;
+    let totalWageUntil = 0;
+    let dailyWages = new Map();
 
-let totalWage = empDailyWageArr.reduce((total, dailyWage) => total + dailyWage, 0);
-console.log("Total Wage using reduce: " + totalWage);
+    while (totalHours < MAX_HOURS && totalDays < MAX_DAYS) {
+        const dailyHours = getWorkHours(Math.floor(Math.random() * 3));
+        const dailyWage = dailyHours * WAGE_PER_HOUR;
+        dailyWages.set(totalDays + 1, dailyWage);
+        totalHours += dailyHours;
+        totalWageUntil += dailyWage;
+        totalDays++;
+    }
 
-let dailyWageWithDay = empDailyWageArr.map((dailyWage, index) => `Day ${index + 1}: ${dailyWage}`);
-console.log("Daily Wage with Day: " + dailyWageWithDay);
+    console.log(`Daily Wages: ${Array.from(dailyWages.values())}`);
+    console.log(`Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`);
 
-let fullTimeWageDays = empDailyWageArr.filter(dailyWage => dailyWage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("Days with Full Time Wage: " + fullTimeWageDays);
+    const totalWage = Array.from(dailyWages.values()).reduce((total, wage) => total + wage, 0);
+    console.log(`Total Wage using reduce: $${totalWage}`);
 
-let firstFullTimeWageDay = empDailyWageArr.find(dailyWage => dailyWage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("First occurrence of Full Time Wage: " + firstFullTimeWageDay);
+    const dayWithWages = Array.from(dailyWages.entries()).map(([day, wage]) => `Day ${day}: $${wage}`);
+    console.log(`Day with Wages: ${dayWithWages}`);
 
-let allFullTimeWage = empDailyWageArr.every(dailyWage => dailyWage === FULL_TIME_HOURS * WAGE_PER_HOUR);
-console.log("Every element is Full Time Wage: " + allFullTimeWage);
+    const fullTimeWageDays = Array.from(dailyWages.entries()).filter(([day, wage]) => wage === FULL_TIME_WAGE).map(([day, wage]) => day);
+    console.log(`Days with Full Time Wage: ${fullTimeWageDays.length}`);
 
-let anyPartTimeWage = empDailyWageArr.some(dailyWage => dailyWage === PART_TIME_HOURS * WAGE_PER_HOUR);
-console.log("Any Part Time Wage: " + anyPartTimeWage);
+    const firstFullTimeWageDay = Array.from(dailyWages.entries()).find(([day, wage]) => wage === FULL_TIME_WAGE);
+    console.log(`First occurrence of Full Time Wage: Day ${firstFullTimeWageDay ? firstFullTimeWageDay[0] : 'None'}`);
 
-let numOfDaysWorked = empDailyWageArr.length;
-console.log("Number of days the Employee Worked: " + numOfDaysWorked);
+    const isEveryFullTimeWage = Array.from(dailyWages.values()).every(wage => wage === FULL_TIME_WAGE);
+    console.log(`Is every element a Full Time Wage: ${isEveryFullTimeWage}`);
+
+    const isAnyPartTimeWage = Array.from(dailyWages.values()).some(wage => wage === PART_TIME_WAGE);
+    console.log(`Is there any Part Time Wage: ${isAnyPartTimeWage}`);
+
+    const daysWorked = Array.from(dailyWages.values()).filter(wage => wage > 0).length;
+    console.log(`Number of days the Employee Worked: ${daysWorked}`);
+}
+
+calculateWage();
+const totalWage = calculateTotalWage(20);
+console.log(`Total Wage for 20 Days: $${totalWage}`);
+calculateWageUntilLimit();
