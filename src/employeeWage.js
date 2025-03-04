@@ -6,6 +6,18 @@ const MAX_DAYS = 20;
 const FULL_TIME_WAGE = FULL_TIME_HOURS * WAGE_PER_HOUR;
 const PART_TIME_WAGE = PART_TIME_HOURS * WAGE_PER_HOUR;
 
+class EmployeePayrollData {
+    constructor(id, name, salary) {
+        this.id = id;
+        this.name = name;
+        this.salary = salary;
+    }
+
+    toString() {
+        return `ID: ${this.id}, Name: ${this.name}, Salary: $${this.salary}`;
+    }
+}
+
 function getWorkHours(empType) {
     switch (empType) {
         case 1:
@@ -42,7 +54,7 @@ function calculateTotalWage(days) {
         dailyWages.push({ day, hoursWorked: dailyHours, wageEarned: dailyWage });
         totalWage += dailyWage;
     }
-    console.log(`Daily Wages: ${JSON.stringify(dailyWages)}`);
+    console.log(`Daily Wages: ${JSON.stringify(dailyWages, null, 2)}`);
     return totalWage;
 }
 
@@ -63,17 +75,17 @@ function calculateWageUntilLimit() {
         totalDays++;
     }
 
-    console.log(`Daily Wages: ${JSON.stringify(dailyWages)}`);
+    console.log(`Daily Wages: ${JSON.stringify(dailyWages, null, 2)}`);
     console.log(`Total Days: ${totalDays}, Total Hours: ${totalHours}, Total Wage: $${totalWageUntil}`);
 
     const totalWage = dailyWages.reduce((total, { wageEarned }) => total + wageEarned, 0);
     console.log(`Total Wage using reduce: $${totalWage}`);
 
     const dayWithWages = dailyWages.map(({ day, wageEarned }) => `Day ${day}: $${wageEarned}`);
-    console.log(`Day with Wages: ${dayWithWages}`);
+    console.log(`Day with Wages: ${dayWithWages.join(', ')}`);
 
     const fullTimeWageDays = dailyWages.filter(({ wageEarned }) => wageEarned === FULL_TIME_WAGE).map(({ day }) => day);
-    console.log(`Days with Full Time Wage: ${fullTimeWageDays.length}`);
+    console.log(`Days with Full Time Wage: ${fullTimeWageDays.join(', ')}`);
 
     const firstFullTimeWageDay = dailyWages.find(({ wageEarned }) => wageEarned === FULL_TIME_WAGE);
     console.log(`First occurrence of Full Time Wage: Day ${firstFullTimeWageDay ? firstFullTimeWageDay.day : 'None'}`);
@@ -100,18 +112,21 @@ function calculateWageUntilLimit() {
             fullWorkingDays.push(day);
         }
     });
-    console.log(`Full Working Days: ${fullWorkingDays}`);
+    console.log(`Full Working Days: ${fullWorkingDays.join(', ')}`);
 
     const partWorkingDays = dailyWages
         .filter(({ hoursWorked }) => hoursWorked === PART_TIME_HOURS)
         .map(({ day }) => `Day ${day}`);
-    console.log(`Part Working Days: ${partWorkingDays}`);
+    console.log(`Part Working Days: ${partWorkingDays.join(', ')}`);
 
     const noWorkingDays = dailyWages
         .map(({ day, hoursWorked }) => (hoursWorked === 0 ? `Day ${day}` : null))
         .filter(day => day !== null);
-    console.log(`No Working Days: ${noWorkingDays}`);
+    console.log(`No Working Days: ${noWorkingDays.join(', ')}`);
 }
+
+const employee1 = new EmployeePayrollData(1, "John Doe", 50000);
+console.log(employee1.toString());
 
 calculateWage();
 const totalWage = calculateTotalWage(20);
